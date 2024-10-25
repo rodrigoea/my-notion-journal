@@ -1,0 +1,24 @@
+{
+  "name": "my-notion-journal",
+  "version": "0.0.1",
+  "description": "A personal script to automate daily journaling in Notion. This script creates a new page each day in my “My Journal” database, carrying over any incomplete tasks (unchecked to-dos) from the previous day. It’s designed to simplify daily task management and ensure nothing gets left behind.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "husky": "^9.1.6",
+    "prettier": "3.3.3"
+  }
+}
