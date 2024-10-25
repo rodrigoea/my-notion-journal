@@ -63,4 +63,4 @@ If you want to set up this automation to run daily using GitHub Actions, follow 
 
 ## GitHub Actions Setup
 
-todo
+![GitHub Actions Demo](./github-actions.mov)
