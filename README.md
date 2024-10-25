@@ -63,4 +63,6 @@ If you want to set up this automation to run daily using GitHub Actions, follow 
 
 ## GitHub Actions Setup
 
-![GitHub Actions Demo](./github-actions.mov)
+![GitHub Actions Demo](https://github.com/rodrigoea/my-notion-journal/blob/main/github-actions.mov)
+
+**todo**
