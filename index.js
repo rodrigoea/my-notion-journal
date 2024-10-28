@@ -16,14 +16,22 @@ async function createDailyPage() {
   return response;
 }
 
-async function getYesterdayPage() {
-  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+async function getMostRecentPage() {
   const response = await notion.blocks.children.list({ block_id: PARENT_PAGE_ID });
-  const yesterdayPage = response.results.find(
-    (page) => page.type === 'child_page' && page.child_page.title.includes(`${yesterday}`),
-  );
+  const today = new Date();
 
-  return yesterdayPage;
+  for (let i = 1; i <= 7; i++) {
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() - i);
+    const formattedDate = targetDate.toISOString().split('T')[0];
+    const page = response.results.find(
+      (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${formattedDate}`),
+    );
+    if (page) return page;
+  }
+
+  console.log('No previous page found within the last 7 days');
+  return null;
 }
 
 async function getTodayPageContent() {
@@ -42,21 +50,21 @@ async function getTodayPageId() {
   const today = new Date().toISOString().split('T')[0];
   const response = await notion.blocks.children.list({ block_id: PARENT_PAGE_ID });
   const todayPageId = response.results.find(
-    (page) => page.type === 'child_page' && page.child_page.title.includes(`${today}`),
+    (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${today}`),
   )?.id;
   return todayPageId || undefined;
 }
 
 async function moveIncompleteTasks() {
-  const yesterdayPage = await getYesterdayPage();
+  const mostRecentPage = await getMostRecentPage();
 
-  if (!yesterdayPage) {
-    console.log('Yesterday page not found, skipping task migration');
+  if (!mostRecentPage) {
+    console.log('No recent page found, skipping task migration');
     return;
   }
 
   const todayPageContent = await getTodayPageContent();
-  const blocks = await notion.blocks.children.list({ block_id: yesterdayPage.id });
+  const blocks = await notion.blocks.children.list({ block_id: mostRecentPage.id });
   const todayPageId = await getTodayPageId();
 
   const incompleteTasks = blocks.results.filter((block) => block.type === 'to_do' && !block.to_do.checked);
