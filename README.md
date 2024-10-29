@@ -2,7 +2,11 @@
 
 https://github.com/user-attachments/assets/d355c097-4fbc-4f5e-bbed-9afccf30e0f3
 
-This script is for a personal need. It automates the creation of a daily journal in [Notion](https://notion.so), where each day a new page is generated. Any incomplete tasks from the previous day are automatically moved over to the new daily page.
+Automate the creation of a daily journal in [Notion](https://notion.so).
+
+### ⚠️ Note
+
+This project is a personal one that I'm refining in my free time. That means it may still have bugs and isn't perfect, so if you decide to use it, please keep in mind that some tweaks might be necessary. Feel free to report any bugs or make suggestions :)
 
 ## Features
 
