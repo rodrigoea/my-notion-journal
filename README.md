@@ -48,8 +48,8 @@ This project is a personal one that I'm refining in my free time. That means it 
    - Open the Notion page you want to use as the parent in your browser.
    - Copy the ID from the URL after `notion.so/`, which should look like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
 
-      **p.s** If you created the integration as `internal`, make sure to connect it to the page by opening the three-dot menu at the top right → connections → click the integration name to connect.
-  
+     **p.s** If you created the integration as `internal`, make sure to connect it to the page by opening the three-dot menu at the top right → connections → click the integration name to connect.
+
 5. **Create a `.env` File in the Root Directory:**
 
    Copy the `.env.example` file and rename it to `.env`. Update the file with your API key and Parent Page ID.
