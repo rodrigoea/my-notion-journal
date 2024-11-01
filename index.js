@@ -12,8 +12,7 @@ async function createDailyPage() {
       title: [{ text: { content: `Daily Journal - ${today}` } }],
     },
   });
-
-  return response;
+  return response ;
 }
 
 async function getMostRecentPage() {
@@ -25,7 +24,7 @@ async function getMostRecentPage() {
     targetDate.setDate(today.getDate() - i);
     const formattedDate = targetDate.toISOString().split('T')[0];
     const page = response.results.find(
-      (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${formattedDate}`),
+      (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${formattedDate}`)
     );
     if (page) return page;
   }
@@ -50,36 +49,14 @@ async function getTodayPageId() {
   const today = new Date().toISOString().split('T')[0];
   const response = await notion.blocks.children.list({ block_id: PARENT_PAGE_ID });
   const todayPageId = response.results.find(
-    (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${today}`),
+    (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${today}`)
   )?.id;
   return todayPageId || undefined;
 }
 
-async function moveIncompleteTasks() {
-  const mostRecentPage = await getMostRecentPage();
-
-  if (!mostRecentPage) {
-    console.log('No recent page found, skipping task migration');
-    return;
-  }
-
-  const todayPageContent = await getTodayPageContent();
-  const blocks = await notion.blocks.children.list({ block_id: mostRecentPage.id });
-  const todayPageId = await getTodayPageId();
-
-  const incompleteTasks = blocks.results.filter((block) => block.type === 'to_do' && !block.to_do.checked);
-
-  for (const task of incompleteTasks) {
-    const taskAlreadyExists = todayPageContent.results.some(
-      (block) =>
-        block.type === 'to_do' && block.to_do.rich_text[0].text.content === task.to_do.rich_text[0].text.content,
-    );
-
-    if (taskAlreadyExists) {
-      console.log(`Task "${task.to_do.rich_text[0].text.content}" already exists in today's page`);
-      continue;
-    }
-
+// Helper function to move nested tasks
+async function moveNestedTasks(tasks, todayPageId) {
+  for (const task of tasks) {
     await notion.blocks.children.append({
       block_id: todayPageId,
       children: [
@@ -93,7 +70,32 @@ async function moveIncompleteTasks() {
         },
       ],
     });
+
+    // Check if the task has nested children and move them as well
+    if (task.has_children) {
+      const nestedTasks = await notion.blocks.children.list({ block_id: task.id });
+      await moveNestedTasks(nestedTasks.results, todayPageId);
+    }
   }
+}
+
+async function moveIncompleteTasks() {
+  const mostRecentPage = await getMostRecentPage();
+  if (!mostRecentPage) {
+    console.log('No recent page found, skipping task migration');
+    return;
+  }
+
+  const todayPageId = await getTodayPageId();
+  if (!todayPageId) return;
+
+  const blocks = await notion.blocks.children.list({ block_id: mostRecentPage.id });
+  const incompleteTasks = blocks.results.filter(
+    (block) => block.type === 'to_do' && !block.to_do.checked
+  );
+
+  // Move all tasks, including nested ones
+  await moveNestedTasks(incompleteTasks, todayPageId);
 }
 
 async function runDailyAutomation() {
