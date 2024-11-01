@@ -12,7 +12,7 @@ async function createDailyPage() {
       title: [{ text: { content: `Daily Journal - ${today}` } }],
     },
   });
-  return response ;
+  return response;
 }
 
 async function getMostRecentPage() {
@@ -24,7 +24,7 @@ async function getMostRecentPage() {
     targetDate.setDate(today.getDate() - i);
     const formattedDate = targetDate.toISOString().split('T')[0];
     const page = response.results.find(
-      (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${formattedDate}`)
+      (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${formattedDate}`),
     );
     if (page) return page;
   }
@@ -33,23 +33,11 @@ async function getMostRecentPage() {
   return null;
 }
 
-async function getTodayPageContent() {
-  const todayPageId = await getTodayPageId();
-
-  if (!todayPageId) {
-    console.log('Today page not found');
-    return;
-  }
-
-  const todayPageContent = await notion.blocks.children.list({ block_id: todayPageId });
-  return todayPageContent;
-}
-
 async function getTodayPageId() {
   const today = new Date().toISOString().split('T')[0];
   const response = await notion.blocks.children.list({ block_id: PARENT_PAGE_ID });
   const todayPageId = response.results.find(
-    (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${today}`)
+    (page) => page.type === 'child_page' && page.child_page.title.includes(`Daily Journal - ${today}`),
   )?.id;
   return todayPageId || undefined;
 }
@@ -90,9 +78,7 @@ async function moveIncompleteTasks() {
   if (!todayPageId) return;
 
   const blocks = await notion.blocks.children.list({ block_id: mostRecentPage.id });
-  const incompleteTasks = blocks.results.filter(
-    (block) => block.type === 'to_do' && !block.to_do.checked
-  );
+  const incompleteTasks = blocks.results.filter((block) => block.type === 'to_do' && !block.to_do.checked);
 
   // Move all tasks, including nested ones
   await moveNestedTasks(incompleteTasks, todayPageId);

@@ -4,7 +4,7 @@
   "description": "A personal script to automate daily journaling in Notion. This script creates a new page each day in my “My Journal” database, carrying over any incomplete tasks (unchecked to-dos) from the previous day. It’s designed to simplify daily task management and ensure nothing gets left behind.",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . && prettier --write .",
     "prepare": "husky"
   },
   "keywords": [],
