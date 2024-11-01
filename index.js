@@ -12,8 +12,7 @@ async function createDailyPage() {
       title: [{ text: { content: `Daily Journal - ${today}` } }],
     },
   });
-
-  return response;
+  return response ;
 }
 
 async function getMostRecentPage() {
