@@ -1,8 +1,6 @@
 # My Notion Journal
 
-https://github.com/user-attachments/assets/d355c097-4fbc-4f5e-bbed-9afccf30e0f3
-
-Automate the creation of a daily journal in [Notion](https://notion.so).
+This script automates the cleanup of a to-do list in [Notion](https://notion.so) by removing any checked "Done" items, including nested ones. This script is intended to be run daily to keep the list current and organized.
 
 ### ⚠️ Note
 
@@ -10,18 +8,13 @@ This project is a personal one that I'm refining in my free time. That means it 
 
 ## Features
 
-- Creates a "Daily Journal" page in Notion every day.
-- Migrates any unchecked tasks from the previous day's page to the new daily page.
-- Runs daily via GitHub Actions for continuous automation.
-
----
+- **Daily Cleanup**: Removes any completed ("Done") items from a specified Notion to-do list, including nested items.
+- **Automation Ready**: Runs daily via GitHub Actions for continuous maintenance.
 
 ## Requirements
 
 - **Node.js** (recommended version 14+)
 - A **Notion Integration** with access to your workspace and the relevant parent page ID.
-
----
 
 ## Setup
 
