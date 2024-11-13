@@ -22,24 +22,51 @@ const removeCheckedItems = async () => {
   const deleteDoneItems = async (blocks) => {
     for (const block of blocks) {
       if (block.type === 'to_do' && block.to_do.checked) {
-        // Delete the checked item
         await notion.blocks.delete({ block_id: block.id });
-      } else if (block.has_children) {
-        // recursively process nested items
-        const childBlocks = await fetchPageContent(block.id);
-        await deleteDoneItems(childBlocks);
       }
     }
   };
 
-  // Fetch the main page content
-  const mainContent = await fetchPageContent(PARENT_PAGE_ID);
-  await deleteDoneItems(mainContent);
+  const updateLastUpdated = async (blockId) => {
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    });
+
+    const blocks = await fetchPageContent(blockId);
+
+    const lastUpdatedBlock = blocks.find(
+      (block) => block.type === 'paragraph' && block.paragraph.rich_text[0]?.plain_text?.startsWith('Last Updated:'),
+    );
+
+    if (lastUpdatedBlock) {
+      await notion.blocks.update({
+        block_id: lastUpdatedBlock.id,
+        paragraph: {
+          rich_text: [
+            {
+              type: 'text',
+              text: {
+                content: `Last Updated: ${formattedDate}`,
+              },
+              annotations: {
+                italic: true,
+              },
+            },
+          ],
+        },
+      });
+    }
+  };
+
+  const blocks = await fetchPageContent(PARENT_PAGE_ID);
+  await deleteDoneItems(blocks);
+  await updateLastUpdated(PARENT_PAGE_ID);
 };
 
-async function runDailyAutomation() {
-  await removeCheckedItems();
-  console.log("Checked 'Done' items removed.");
-}
-
-runDailyAutomation().catch(console.error);
+removeCheckedItems().catch(console.error);
