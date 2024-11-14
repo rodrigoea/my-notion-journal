@@ -29,14 +29,15 @@ const removeCheckedItems = async () => {
 
   const updateLastUpdated = async (blockId) => {
     const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-US', {
+    const formattedDate = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Vancouver',
       month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
       second: 'numeric',
-    });
+    }).format(today);
 
     const blocks = await fetchPageContent(blockId);
 
