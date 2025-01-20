@@ -1,6 +1,4 @@
 on:
-  schedule:
-    - cron: '0 14 * * 1-5' # Runs every weekday (Monday to Friday) at 6 AM Vancouver time
   workflow_dispatch:
 
 jobs:
